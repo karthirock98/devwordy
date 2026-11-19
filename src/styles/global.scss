@@ -1,0 +1,226 @@
+:root {
+  --bg: #050706;
+  --bg-2: #0a0e0c;
+  --surface: #0e1311;
+  --surface-2: #131a17;
+  --line: #1c2622;
+  --line-2: #26332d;
+  --text: #d6e4dc;
+  --text-dim: #8a9c92;
+  --text-faint: #56665d;
+
+  --green: #39ff88;
+  --green-dim: #1f9d57;
+  --green-glow: rgba(57, 255, 136, 0.35);
+  --cyan: #2de2e6;
+  --cyan-glow: rgba(45, 226, 230, 0.3);
+  --purple: #a17bff;
+  --purple-glow: rgba(161, 123, 255, 0.3);
+  --amber: #ffc857;
+  --red: #ff4d6d;
+  --red-glow: rgba(255, 77, 109, 0.35);
+
+  --mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --sans: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --gutter: 16px;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Ambient grid + vignette */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(57, 255, 136, 0.06), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(161, 123, 255, 0.05), transparent 70%),
+    linear-gradient(rgba(57, 255, 136, 0.025) 1px, transparent 1px) 0 0 / 100% 32px,
+    linear-gradient(90deg, rgba(57, 255, 136, 0.025) 1px, transparent 1px) 0 0 / 32px 100%;
+}
+
+/* Scanlines */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 2px, rgba(0, 0, 0, 0.12) 3px);
+  mix-blend-mode: multiply;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+a {
+  color: var(--cyan);
+}
+
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--green);
+  color: #000;
+}
+
+.mono {
+  font-family: var(--mono);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Shared button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-2);
+  background: var(--surface-2);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition:
+    transform 0.15s var(--ease),
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background 0.2s,
+    color 0.2s;
+
+  &:hover:not(:disabled) {
+    border-color: var(--green-dim);
+    box-shadow: 0 0 0 1px var(--green-glow), 0 0 18px -4px var(--green-glow);
+  }
+  &:active:not(:disabled) {
+    transform: translateY(1px) scale(0.98);
+  }
+  &:disabled {
+    opacity: 0.45;
+  }
+
+  &.primary {
+    background: var(--green);
+    border-color: var(--green);
+    color: #02140a;
+    box-shadow: 0 0 24px -6px var(--green-glow);
+
+    &:hover:not(:disabled) {
+      background: #6bffa6;
+      box-shadow: 0 0 32px -4px var(--green-glow);
+    }
+  }
+
+  &.ghost {
+    background: transparent;
+  }
+
+  &.danger:hover:not(:disabled) {
+    border-color: var(--red);
+    box-shadow: 0 0 18px -4px var(--red-glow);
+    color: var(--red);
+  }
+}
+
+/* Section label "// LIKE THIS" */
+.label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+
+  &::before {
+    content: '// ';
+    color: var(--green-dim);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.45s var(--ease) both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

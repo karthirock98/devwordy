@@ -1,0 +1,133 @@
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.definition {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--text);
+  padding-left: 14px;
+  border-left: 2px solid var(--green);
+}
+
+.block {
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cyan);
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-dim);
+  }
+}
+
+.code {
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-sm);
+  background: #040605;
+  overflow: hidden;
+
+  pre {
+    margin: 0;
+    padding: 12px 0;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+}
+
+.codeHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-2);
+}
+
+.dots {
+  display: flex;
+  gap: 5px;
+
+  i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--line-2);
+  }
+  i:nth-child(1) {
+    background: #ff5f57aa;
+  }
+  i:nth-child(2) {
+    background: #febc2eaa;
+  }
+  i:nth-child(3) {
+    background: #28c840aa;
+  }
+}
+
+.lang {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+.copy {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  background: none;
+  color: var(--text-faint);
+  font-family: var(--mono);
+  font-size: 11px;
+
+  &:hover {
+    color: var(--green);
+  }
+}
+
+.line {
+  display: flex;
+  padding-right: 14px;
+
+  code {
+    white-space: pre;
+    color: #c9d7cf;
+  }
+}
+
+.ln {
+  width: 36px;
+  flex-shrink: 0;
+  padding-right: 12px;
+  text-align: right;
+  color: var(--text-faint);
+  user-select: none;
+  opacity: 0.6;
+}
+
+.kw {
+  color: var(--purple);
+}
+.str {
+  color: var(--amber);
+}
+.comment {
+  color: var(--green-dim);
+  font-style: italic;
+}

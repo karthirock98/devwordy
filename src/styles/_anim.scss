@@ -1,0 +1,8 @@
+// Shared keyframes. CSS Modules scope keyframe names per file, so modules @use this.
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}

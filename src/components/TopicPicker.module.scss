@@ -1,0 +1,261 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  background: rgba(2, 4, 3, 0.82);
+  backdrop-filter: blur(6px);
+  animation: fade 0.3s ease both;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.modal {
+  width: min(720px, 100%);
+  max-height: calc(100vh - 2 * var(--gutter));
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  border: 1px solid rgba(57, 255, 136, 0.3);
+  background: var(--surface);
+  box-shadow:
+    0 30px 80px -20px #000,
+    0 0 50px -24px var(--green-glow);
+  animation: pop 0.45s var(--ease) both;
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 22px 14px;
+  border-bottom: 1px solid var(--line);
+
+  h2 {
+    margin: 4px 0 4px;
+    font-size: clamp(19px, 3.5vw, 24px);
+  }
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+}
+
+.kicker {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+}
+
+.close {
+  align-self: flex-start;
+  border: 0;
+  background: none;
+  color: var(--text-faint);
+  padding: 4px;
+
+  &:hover {
+    color: var(--text);
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px 22px;
+  overflow-y: auto;
+}
+
+.everything {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line-2);
+  background: var(--bg-2);
+  text-align: left;
+  color: var(--amber);
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
+
+  > span:nth-child(2) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    color: var(--text);
+  }
+  small {
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  &:hover {
+    border-color: rgba(255, 200, 87, 0.5);
+  }
+}
+
+.on {
+  border-color: var(--amber);
+  background: rgba(255, 200, 87, 0.07);
+  box-shadow: 0 0 22px -10px rgba(255, 200, 87, 0.6);
+}
+
+.check {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid var(--line-2);
+
+  .on & {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: #1a1200;
+  }
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  align-self: flex-start;
+
+  span {
+    margin-left: 6px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--cyan);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  &:hover span,
+  &:focus-visible span {
+    opacity: 1;
+  }
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: transparent;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-dim);
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    color 0.2s,
+    transform 0.12s;
+
+  small {
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  &:hover {
+    border-color: var(--green-dim);
+    color: var(--text);
+  }
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+.chipOn {
+  border-color: var(--green);
+  background: rgba(57, 255, 136, 0.1);
+  color: var(--green);
+  box-shadow: 0 0 14px -6px var(--green-glow);
+
+  small {
+    color: var(--green-dim);
+  }
+}
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 22px 18px;
+  border-top: 1px solid var(--line);
+}
+
+.pool {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+}
+
+.short {
+  color: var(--amber);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+@media (max-width: 520px) {
+  .head,
+  .body,
+  .foot {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .actions {
+    width: 100%;
+
+    :global(.btn) {
+      flex: 1;
+    }
+  }
+}

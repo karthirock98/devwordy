@@ -1,0 +1,188 @@
+.toasts {
+  position: fixed;
+  right: var(--gutter);
+  bottom: var(--gutter);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(340px, calc(100vw - 2 * var(--gutter)));
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--purple);
+  box-shadow:
+    0 0 0 1px var(--purple-glow),
+    0 12px 40px -8px rgba(0, 0, 0, 0.8),
+    0 0 30px -10px var(--purple-glow);
+  animation: toastIn 0.5s var(--ease) both;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px) scale(0.96);
+  }
+}
+
+.toastIcon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: rgba(161, 123, 255, 0.14);
+  color: var(--purple);
+  animation: iconPop 0.7s 0.2s var(--ease) both;
+}
+
+@keyframes iconPop {
+  0% {
+    transform: scale(0.4) rotate(-20deg);
+  }
+  60% {
+    transform: scale(1.15) rotate(6deg);
+  }
+}
+
+.toastBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+
+  strong {
+    font-size: 15px;
+  }
+}
+
+.toastLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--purple);
+}
+
+.toastDesc {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.close {
+  background: none;
+  border: 0;
+  color: var(--text-faint);
+  padding: 2px;
+
+  &:hover {
+    color: var(--text);
+  }
+}
+
+.levelOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  background: rgba(2, 4, 3, 0.78);
+  backdrop-filter: blur(6px);
+  animation: overlayIn 0.35s ease both;
+  cursor: pointer;
+}
+
+@keyframes overlayIn {
+  from {
+    opacity: 0;
+  }
+}
+
+.levelCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  animation: cardIn 0.7s var(--ease) both;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+    filter: blur(10px);
+  }
+}
+
+.levelKicker {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--cyan);
+}
+
+.levelTitle {
+  position: relative;
+  font-family: var(--mono);
+  font-weight: 800;
+  font-size: clamp(44px, 12vw, 88px);
+  letter-spacing: 0.06em;
+  color: var(--green);
+  text-shadow: 0 0 30px var(--green-glow);
+
+  &::before,
+  &::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    opacity: 0.7;
+  }
+  &::before {
+    color: var(--cyan);
+    animation: glitch 1.2s steps(2) infinite;
+  }
+  &::after {
+    color: var(--purple);
+    animation: glitch 1.2s steps(2) infinite reverse;
+  }
+}
+
+@keyframes glitch {
+  0% {
+    clip-path: inset(0 0 70% 0);
+    transform: translate(-3px, 0);
+  }
+  25% {
+    clip-path: inset(40% 0 30% 0);
+    transform: translate(3px, 0);
+  }
+  50% {
+    clip-path: inset(80% 0 0 0);
+    transform: translate(-2px, 0);
+  }
+  75% {
+    clip-path: inset(10% 0 60% 0);
+    transform: translate(2px, 0);
+  }
+  100% {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+.levelNum {
+  font-family: var(--mono);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--purple);
+}
+
+.levelRank {
+  color: var(--text-dim);
+}
