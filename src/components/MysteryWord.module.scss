@@ -23,10 +23,6 @@
 
 .category {
   color: var(--cyan);
-
-  .hard & {
-    color: var(--purple);
-  }
 }
 
 .length {
@@ -93,39 +89,7 @@
   }
 }
 
-/* ---------- Fogged letters (easy / medium) ---------- */
-.fogChar {
-  position: relative;
-  z-index: 1;
-  color: var(--text-dim);
-  user-select: none;
-  animation: waver 6s calc(var(--i) * -0.7s) ease-in-out infinite;
-
-  .easy & {
-    filter: url(#fog-easy);
-    opacity: 0.72;
-  }
-  .medium & {
-    filter: url(#fog-medium);
-    opacity: 0.6;
-    transform: scale(1.1);
-  }
-}
-
-@keyframes waver {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  33% {
-    transform: translate(1px, -1px);
-  }
-  66% {
-    transform: translate(-1px, 1px);
-  }
-}
-
-/* Drifting smoke layers on top of the glyph */
+/* Drifting smoke over every hidden letter */
 .fog {
   position: absolute;
   inset: -40%;
@@ -137,19 +101,6 @@
     radial-gradient(circle at 50% 20%, rgba(161, 123, 255, 0.12), transparent 40%);
   animation: drift 8s calc(var(--i) * -1.3s) ease-in-out infinite alternate;
   mix-blend-mode: screen;
-
-  .medium & {
-    background:
-      radial-gradient(circle at 30% 40%, rgba(170, 210, 195, 0.32), transparent 45%),
-      radial-gradient(circle at 70% 65%, rgba(45, 226, 230, 0.16), transparent 45%),
-      radial-gradient(circle at 50% 20%, rgba(161, 123, 255, 0.16), transparent 45%);
-  }
-
-  .hard & {
-    background:
-      radial-gradient(circle at 40% 50%, rgba(161, 123, 255, 0.18), transparent 45%),
-      radial-gradient(circle at 70% 30%, rgba(45, 226, 230, 0.1), transparent 45%);
-  }
 }
 
 @keyframes drift {
@@ -161,7 +112,7 @@
   }
 }
 
-/* ---------- Hard: pure static, no glyph in the DOM ---------- */
+/* ---------- Hidden letters: static only, the glyph is never in the DOM ---------- */
 .static {
   position: absolute;
   inset: 0;

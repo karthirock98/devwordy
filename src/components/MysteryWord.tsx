@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Info, Radio } from 'lucide-react';
-import type { Difficulty, SessionStatus, WordEntry } from '../game/types';
+import type { SessionStatus, WordEntry } from '../game/types';
 import { tilesFor, type Tile } from '../game/engine';
 import styles from './MysteryWord.module.scss';
 
@@ -34,7 +34,6 @@ function ScrambleChar({ char, delay }: { char: string; delay: number }) {
 interface Props {
   word: WordEntry;
   revealed: number[];
-  difficulty: Difficulty;
   status: SessionStatus;
   /** Changes on every wrong guess to retrigger the glitch animation. */
   errorKey: number;
@@ -50,7 +49,6 @@ interface Props {
 export default function MysteryWord({
   word,
   revealed,
-  difficulty,
   status,
   errorKey,
   hintsUsed,
@@ -70,7 +68,6 @@ export default function MysteryWord({
   const revealedSet = new Set(revealed);
   const letterCount = tiles.filter((t) => !t.isGap).length;
   const finished = status !== 'playing';
-  const showCategory = difficulty !== 'hard' || finished;
 
   const [glitch, setGlitch] = useState(false);
   useEffect(() => {
@@ -83,10 +80,10 @@ export default function MysteryWord({
   let order = 0;
 
   return (
-    <section className={`${styles.stage} ${styles[difficulty]} ${status === 'won' ? styles.won : ''} ${status === 'lost' ? styles.lost : ''}`}>
+    <section className={`${styles.stage} ${status === 'won' ? styles.won : ''} ${status === 'lost' ? styles.lost : ''}`}>
       <div className={styles.meta}>
         <span className={styles.category}>
-          <span className={styles.metaKey}>sector:</span> {showCategory ? word.category : '█████ CLASSIFIED'}
+          <span className={styles.metaKey}>sector:</span> {word.category}
         </span>
         <span className={styles.length}>
           {letterCount} chars{groups.length > 1 ? ` · ${groups.length} words` : ''}
@@ -117,12 +114,8 @@ export default function MysteryWord({
                       <span className={styles.char}>
                         <ScrambleChar char={tile.char} delay={finished ? i * 55 : 0} />
                       </span>
-                    ) : difficulty === 'hard' ? (
-                      <span className={styles.static} aria-hidden="true" />
                     ) : (
-                      <span className={styles.fogChar} aria-hidden="true">
-                        {tile.char}
-                      </span>
+                      <span className={styles.static} aria-hidden="true" />
                     )}
                     {!isRevealed && <span className={styles.fog} aria-hidden="true" />}
                   </div>

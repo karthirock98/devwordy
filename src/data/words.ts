@@ -1,9 +1,10 @@
 import type { WordEntry } from '../game/types';
 import { MORE_WORDS } from './wordsMore';
+import { LEVEL_WORDS } from './wordsLevels';
 
 /**
  * The word bank. Hints must never contain the word itself.
- * `difficulty` describes how advanced the concept is, not the fog level.
+ * `difficulty` is the level: easy = basic, medium = mid-level, hard = advanced.
  */
 const CORE_WORDS: WordEntry[] = [
   {
@@ -677,7 +678,7 @@ CMD ["node", "server.js"]`,
     id: 'kubernetes',
     word: 'Kubernetes',
     category: 'DevOps',
-    difficulty: 'easy',
+    difficulty: 'medium',
     fact: "Open-sourced by Google in 2014, based on its internal system called Borg.",
     definition: 'An open-source platform that deploys, scales and manages containerized applications across a cluster.',
     explanation:
@@ -1202,7 +1203,7 @@ dog.speak(); // found up the chain`,
   },
 ];
 
-export const WORDS: WordEntry[] = [...CORE_WORDS, ...MORE_WORDS];
+export const WORDS: WordEntry[] = [...CORE_WORDS, ...MORE_WORDS, ...LEVEL_WORDS];
 
 export const WORD_MAP: Record<string, WordEntry> = Object.fromEntries(WORDS.map((w) => [w.id, w]));
 

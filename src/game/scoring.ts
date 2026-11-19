@@ -1,7 +1,6 @@
 import type { Difficulty, GameSession, WordEntry } from './types';
 
 export const BASE_XP: Record<Difficulty, number> = { easy: 50, medium: 100, hard: 175 };
-export const COMPLEXITY_BONUS: Record<Difficulty, number> = { easy: 0, medium: 15, hard: 30 };
 /** Fraction of the round's max XP each hint removes (1st … 5th). */
 export const HINT_COST = [0.1, 0.15, 0.2, 0.2, 0.25] as const;
 /** Hints 1–3 are text clues; hints 4–5 each uncover one hidden letter. */
@@ -14,8 +13,9 @@ export const DAILY_BONUS = 25;
 export const STREAK_BONUS_PER_DAY = 5;
 export const STREAK_BONUS_CAP = 50;
 
-export function roundMax(word: WordEntry, difficulty: Difficulty): number {
-  return BASE_XP[difficulty] + COMPLEXITY_BONUS[word.difficulty];
+/** Max XP for a round: the level picks both the word set and the reward. */
+export function roundMax(_word: WordEntry, difficulty: Difficulty): number {
+  return BASE_XP[difficulty];
 }
 
 export function hintCostXp(word: WordEntry, difficulty: Difficulty, hintIndex: number): number {

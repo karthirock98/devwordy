@@ -8,6 +8,7 @@ import { useNow } from '../hooks/useToday';
 import { TOTAL_HINTS } from '../game/scoring';
 import ConceptDetails from './ConceptDetails';
 import styles from './ResultScreen.module.scss';
+const LEVEL_NAME: Record<Difficulty, string> = { easy: 'basic', medium: 'mid-level', hard: 'advanced' };
 
 export interface ResultSummary {
   won: boolean;
@@ -113,8 +114,7 @@ export default function ResultScreen({ word, mode, summary, review, onContinue }
         </h2>
         <div className={styles.tags}>
           <span className={styles.tag}>{word.category}</span>
-          <span className={`${styles.tag} ${styles[`c_${word.difficulty}`]}`}>{word.difficulty} concept</span>
-          <span className={styles.tag}>played on {summary.difficulty}</span>
+          <span className={`${styles.tag} ${styles[`c_${word.difficulty}`]}`}>{LEVEL_NAME[word.difficulty]} concept</span>
         </div>
       </header>
 

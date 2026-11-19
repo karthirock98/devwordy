@@ -132,7 +132,6 @@ export default function GamePage({ mode }: { mode: GameMode }) {
           <MysteryWord
             word={word}
             revealed={session.revealed}
-            difficulty={session.difficulty}
             status={session.status}
             errorKey={errorKey}
             hintsUsed={session.hintsUsed}
@@ -190,7 +189,7 @@ export default function GamePage({ mode }: { mode: GameMode }) {
           </div>
           <span className={styles.modeSub}>
             {mode === 'daily'
-              ? `${prettyDate(today)} · same word for everyone on your topics`
+              ? `${prettyDate(today)} · same word for everyone on your topics and level`
               : `round #${progress.unlimited.played + (finished ? 0 : 1)} · ${progress.unlimited.won} solved`}
           </span>
         </div>

@@ -10,9 +10,9 @@ import styles from './GameControls.module.scss';
 /* ---------- Difficulty ---------- */
 
 const DIFF_INFO: Record<Difficulty, { label: string; desc: string }> = {
-  easy: { label: 'Easy', desc: 'Light fog' },
-  medium: { label: 'Medium', desc: 'Dense fog' },
-  hard: { label: 'Hard', desc: 'Total blackout' },
+  easy: { label: 'Easy', desc: 'Basic concepts' },
+  medium: { label: 'Medium', desc: 'Mid-level concepts' },
+  hard: { label: 'Hard', desc: 'Advanced concepts' },
 };
 
 export function DifficultySelector({ value, locked, onChange }: { value: Difficulty; locked: boolean; onChange: (d: Difficulty) => void }) {
@@ -37,7 +37,7 @@ export function DifficultySelector({ value, locked, onChange }: { value: Difficu
       </div>
       {locked && (
         <span className={styles.lockNote}>
-          <Lock size={11} /> difficulty locked for this round
+          <Lock size={11} /> level locked for this round
         </span>
       )}
     </div>

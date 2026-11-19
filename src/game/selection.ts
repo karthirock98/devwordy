@@ -1,5 +1,5 @@
 import { WORDS } from '../data/words';
-import type { Category, WordEntry } from './types';
+import type { Category, Difficulty, WordEntry } from './types';
 import { dayNumber } from './dates';
 
 /** Small deterministic PRNG so every player gets the same sequence. */
@@ -33,7 +33,7 @@ const DAILY_ORDER = seededShuffle(
 );
 
 /** Words in the chosen topics; null or empty means every topic. */
-export function wordPool(topics: Category[] | null, source: WordEntry[] = WORDS): WordEntry[] {
+export function topicPool(topics: Category[] | null, source: WordEntry[] = WORDS): WordEntry[] {
   if (!topics || topics.length === 0) return source;
   const set = new Set(topics);
   const pool = source.filter((w) => set.has(w.category));
@@ -41,18 +41,34 @@ export function wordPool(topics: Category[] | null, source: WordEntry[] = WORDS)
 }
 
 /**
- * Deterministic daily word: walks the fixed order (filtered to the player's topics)
- * one word per calendar day. Everyone with the same topics gets the same word on the
- * same date, and no word repeats until that whole pool has been used.
+ * Words in the chosen topics at the chosen level (easy = basic, medium = mid-level,
+ * hard = advanced). Falls back to every level of those topics if none match.
  */
-export function dailyWord(date: string, topics: Category[] | null = null): WordEntry {
-  const order = wordPool(topics, DAILY_ORDER);
+export function wordPool(topics: Category[] | null, difficulty: Difficulty | null = null, source: WordEntry[] = WORDS): WordEntry[] {
+  const byTopic = topicPool(topics, source);
+  if (!difficulty) return byTopic;
+  const byLevel = byTopic.filter((w) => w.difficulty === difficulty);
+  return byLevel.length ? byLevel : byTopic;
+}
+
+/**
+ * Deterministic daily word: walks the fixed order (filtered to the player's topics and
+ * level) one word per calendar day. Everyone with the same topics and level gets the
+ * same word on the same date, and no word repeats until that whole pool has been used.
+ */
+export function dailyWord(date: string, topics: Category[] | null = null, difficulty: Difficulty | null = null): WordEntry {
+  const order = wordPool(topics, difficulty, DAILY_ORDER);
   return order[dayNumber(date) % order.length];
 }
 
-/** Random word for unlimited mode from the chosen topics, avoiding recently played ones. */
-export function randomWord(recent: string[], exclude?: string, topics: Category[] | null = null): WordEntry {
-  const source = wordPool(topics);
+/** Random word for unlimited mode from the chosen topics and level, avoiding recently played ones. */
+export function randomWord(
+  recent: string[],
+  exclude?: string,
+  topics: Category[] | null = null,
+  difficulty: Difficulty | null = null,
+): WordEntry {
+  const source = wordPool(topics, difficulty);
   const blocked = new Set(recent);
   if (exclude) blocked.add(exclude);
   let pool = source.filter((w) => !blocked.has(w.id));

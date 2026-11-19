@@ -17,10 +17,10 @@ function initialSession(mode: GameMode, today: string, recent: string[], difficu
   const stored = loadSession(mode);
   if (mode === 'daily') {
     if (stored && stored.date === today) return stored;
-    return createSession('daily', dailyWord(today, topics), difficulty, today);
+    return createSession('daily', dailyWord(today, topics, difficulty), difficulty, today);
   }
   if (stored) return stored;
-  return createSession('unlimited', randomWord(recent, undefined, topics), difficulty);
+  return createSession('unlimited', randomWord(recent, undefined, topics, difficulty), difficulty);
 }
 
 /** Letter tiles that are still hidden. */
@@ -59,21 +59,21 @@ export function useGame(mode: GameMode) {
   // New calendar day → new daily word.
   useEffect(() => {
     if (mode === 'daily' && ref.current.date !== today) {
-      setSession(createSession('daily', dailyWord(today, topics), ref.current.difficulty, today));
+      setSession(createSession('daily', dailyWord(today, topics, ref.current.difficulty), ref.current.difficulty, today));
       setFeedback(null);
     }
   }, [mode, today, topics, setSession]);
 
-  // Topics changed → swap the word if the round has not really started yet.
+  // Topics changed (or a saved word no longer fits the level) → swap the word if the round has not really started yet.
   const topicsKey = topics ? [...topics].sort().join('|') : '*';
   useEffect(() => {
     const current = ref.current;
     if (isLocked(current)) return;
     if (mode === 'daily') {
-      const next = dailyWord(today, topics);
+      const next = dailyWord(today, topics, current.difficulty);
       if (next.id !== current.wordId) setSession(createSession('daily', next, current.difficulty, today));
-    } else if (!wordPool(topics).some((w) => w.id === current.wordId)) {
-      setSession(createSession('unlimited', randomWord(progress.unlimited.recent, current.wordId, topics), current.difficulty));
+    } else if (!wordPool(topics, current.difficulty).some((w) => w.id === current.wordId)) {
+      setSession(createSession('unlimited', randomWord(progress.unlimited.recent, current.wordId, topics, current.difficulty), current.difficulty));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topicsKey]);
@@ -107,10 +107,15 @@ export function useGame(mode: GameMode) {
       const current = ref.current;
       if (isLocked(current) || current.difficulty === d) return;
       setPreferredDifficulty(d);
-      setSession({ ...current, difficulty: d });
+      // The level decides the word set, so a new level means a new word from that set.
+      setSession(
+        mode === 'daily'
+          ? createSession('daily', dailyWord(today, topics, d), d, today)
+          : createSession('unlimited', randomWord(progress.unlimited.recent, current.wordId, topics, d), d),
+      );
       setFeedback(null);
     },
-    [setPreferredDifficulty, setSession],
+    [mode, today, topics, progress.unlimited.recent, setPreferredDifficulty, setSession],
   );
 
   /** Hints 1–3 reveal text; hints 4–5 uncover one random hidden letter. */
@@ -152,7 +157,7 @@ export function useGame(mode: GameMode) {
   const nextRound = useCallback(() => {
     if (mode !== 'unlimited') return;
     const current = ref.current;
-    setSession(createSession('unlimited', randomWord(progress.unlimited.recent, current.wordId, topics), current.difficulty));
+    setSession(createSession('unlimited', randomWord(progress.unlimited.recent, current.wordId, topics, current.difficulty), current.difficulty));
     setFeedback(null);
   }, [mode, progress.unlimited.recent, topics, setSession]);
 
