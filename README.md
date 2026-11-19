@@ -65,4 +65,5 @@ To add words, append entries to `src/data/words.ts`. Hints must not contain the 
 3. Add at least 3–5 words with that `category` in `src/data/wordsMore.ts`. Every word needs a `fact`, and its hints and fact must not contain the answer.
 
 Players who chose "Anything goes" get the new category automatically. Everyone else sees it under **add more** on their profile.
-To remove a category, delete its words and its entries in the two files above; saved player choices that mention it are cleaned up on load.
+To remove a category, delete its words and its entries in the two files above; saved player choices that mention it are cleaned up on load..
+
