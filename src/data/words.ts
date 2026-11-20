@@ -1,6 +1,7 @@
 import type { WordEntry } from '../game/types';
 import { MORE_WORDS } from './wordsMore';
 import { LEVEL_WORDS } from './wordsLevels';
+import { EXTRA_WORDS } from './wordsExtra';
 
 /**
  * The word bank. Hints must never contain the word itself.
@@ -1203,7 +1204,7 @@ dog.speak(); // found up the chain`,
   },
 ];
 
-export const WORDS: WordEntry[] = [...CORE_WORDS, ...MORE_WORDS, ...LEVEL_WORDS];
+export const WORDS: WordEntry[] = [...CORE_WORDS, ...MORE_WORDS, ...LEVEL_WORDS, ...EXTRA_WORDS];
 
 export const WORD_MAP: Record<string, WordEntry> = Object.fromEntries(WORDS.map((w) => [w.id, w]));
 

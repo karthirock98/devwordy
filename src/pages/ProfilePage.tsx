@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Lock, RotateCcw } from 'lucide-react';
-import type { Category, WordEntry } from '../game/types';
+import type { Category, Difficulty, WordEntry } from '../game/types';
 import { ACHIEVEMENTS, accuracy, xpToNext } from '../game/progression';
-import { WORDS } from '../data/words';
+import { WORDS, getWord } from '../data/words';
 import { usePlayer } from '../hooks/PlayerContext';
 import { useAnimatedNumber } from '../hooks/useAnimatedNumber';
 import AchievementIcon from '../components/AchievementIcon';
@@ -23,6 +23,22 @@ export default function ProfilePage() {
   const shown = WORDS.filter((w) => filter === 'all' || w.category === filter).sort(
     (a, b) => Number(discovered.has(b.id)) - Number(discovered.has(a.id)) || a.word.localeCompare(b.word),
   );
+
+  const LEVELS: { id: Difficulty; label: string }[] = [
+    { id: 'easy', label: 'basic' },
+    { id: 'medium', label: 'mid-level' },
+    { id: 'hard', label: 'advanced' },
+  ];
+  const byLevel = useMemo(() => {
+    const solved: Record<Difficulty, number> = { easy: 0, medium: 0, hard: 0 };
+    const total: Record<Difficulty, number> = { easy: 0, medium: 0, hard: 0 };
+    WORDS.forEach((w) => total[w.difficulty]++);
+    discovered.forEach((id) => {
+      const w = getWord(id);
+      if (w) solved[w.difficulty]++;
+    });
+    return { solved, total };
+  }, [discovered]);
 
   const stats = [
     { label: 'games played', value: progress.gamesPlayed },
@@ -62,6 +78,20 @@ export default function ProfilePage() {
               <div key={s.label} className={styles.stat}>
                 <strong>{s.value}</strong>
                 <span>{s.label}</span>
+              </div>
+            ))}
+          </div>
+          <span className="label">solved by level</span>
+          <div className={styles.levels}>
+            {LEVELS.map((l) => (
+              <div key={l.id} className={`${styles.level} ${styles[l.id]}`}>
+                <span className={styles.levelName}>{l.label}</span>
+                <span className={styles.levelTrack}>
+                  <span style={{ transform: `scaleX(${byLevel.solved[l.id] / Math.max(1, byLevel.total[l.id])})` }} />
+                </span>
+                <span className={styles.levelCount}>
+                  {byLevel.solved[l.id]}/{byLevel.total[l.id]}
+                </span>
               </div>
             ))}
           </div>

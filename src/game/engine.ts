@@ -24,6 +24,30 @@ export function letterTiles(word: WordEntry): Tile[] {
   return tilesFor(word).filter((t) => !t.isGap);
 }
 
+/** Easy mode: the first letter of every word starts uncovered. */
+export function starterReveal(word: WordEntry, difficulty: Difficulty): number[] {
+  if (difficulty !== 'easy') return [];
+  const out: number[] = [];
+  let atStart = true;
+  for (const t of tilesFor(word)) {
+    if (t.isGap) atStart = true;
+    else if (atStart) {
+      out.push(t.index);
+      atStart = false;
+    }
+  }
+  return out;
+}
+
+/** Easy mode: a letter probe that is in the word is free; misses and word guesses cost an attempt. */
+export function usesAttempt(guess: Guess, difficulty: Difficulty): boolean {
+  return !(difficulty === 'easy' && guess.kind === 'letter' && guess.result !== 'miss');
+}
+
+export function attemptsUsed(session: GameSession): number {
+  return session.guesses.filter((g) => usesAttempt(g, session.difficulty)).length;
+}
+
 export function createSession(mode: GameMode, word: WordEntry, difficulty: Difficulty, date?: string): GameSession {
   return {
     id: `${mode}-${word.id}-${Date.now().toString(36)}`,
@@ -32,7 +56,7 @@ export function createSession(mode: GameMode, word: WordEntry, difficulty: Diffi
     difficulty,
     date,
     guesses: [],
-    revealed: [],
+    revealed: starterReveal(word, difficulty),
     hintsUsed: 0,
     status: 'playing',
     xpEarned: 0,
@@ -41,7 +65,7 @@ export function createSession(mode: GameMode, word: WordEntry, difficulty: Diffi
 }
 
 export function attemptsLeft(session: GameSession): number {
-  return MAX_ATTEMPTS[session.difficulty] - session.guesses.length;
+  return MAX_ATTEMPTS[session.difficulty] - attemptsUsed(session);
 }
 
 export function isLocked(session: GameSession): boolean {
@@ -105,7 +129,7 @@ export function evaluateGuess(session: GameSession, word: WordEntry, raw: string
 
   const guesses = [...session.guesses, guess];
   const won = guess.result === 'correct';
-  const lost = !won && guesses.length >= MAX_ATTEMPTS[session.difficulty];
+  const lost = !won && attemptsUsed({ ...session, guesses }) >= MAX_ATTEMPTS[session.difficulty];
 
   const next: GameSession = {
     ...session,
@@ -121,7 +145,12 @@ export function evaluateGuess(session: GameSession, word: WordEntry, raw: string
   const count = guess.revealed.length;
   switch (guess.result) {
     case 'hit':
-      return { type: 'hit', message: `"${value}" found: ${count} position${count === 1 ? '' : 's'} decrypted.`, session: next, guess };
+      return {
+        type: 'hit',
+        message: `"${value}" found: ${count} position${count === 1 ? '' : 's'} decrypted.${session.difficulty === 'easy' ? ' Free on Easy.' : ''}`,
+        session: next,
+        guess,
+      };
     case 'partial':
       return { type: 'partial', message: `Wrong word, but ${count} letter${count === 1 ? ' is' : 's are'} in the right place.`, session: next, guess };
     default:

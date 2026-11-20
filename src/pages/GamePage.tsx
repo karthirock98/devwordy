@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CalendarDays, Flag, Infinity as InfinityIcon, SlidersHorizontal } from 'lucide-react';
 import type { Category, GameMode, WordEntry } from '../game/types';
-import { MAX_ATTEMPTS, letterTiles, roundAccuracy, tilesFor } from '../game/engine';
+import { MAX_ATTEMPTS, attemptsUsed, letterTiles, roundAccuracy, tilesFor } from '../game/engine';
 import { FIRST_TRY_BONUS, TEXT_HINTS, TOTAL_HINTS, hintCostXp, potentialXp, roundMax } from '../game/scoring';
 import { prettyDate } from '../game/dates';
 import { getWord } from '../data/words';
@@ -9,7 +9,7 @@ import { useGame } from '../hooks/useGame';
 import { usePlayer } from '../hooks/PlayerContext';
 import MysteryWord from '../components/MysteryWord';
 import HintPanel from '../components/HintPanel';
-import { AttemptsMeter, DifficultySelector, GuessHistory, GuessInput, XpIndicator } from '../components/GameControls';
+import { AttemptsMeter, DifficultySelector, GuessHistory, GuessInput, LetterBoard, XpIndicator } from '../components/GameControls';
 import ResultScreen, { type ResultSummary } from '../components/ResultScreen';
 import ConceptModal from '../components/ConceptModal';
 import TopicPicker from '../components/TopicPicker';
@@ -91,7 +91,7 @@ export default function GamePage({ mode }: { mode: GameMode }) {
       : {
           won: session.status === 'won',
           difficulty: session.difficulty,
-          attempts: session.guesses.length,
+          attempts: attemptsUsed(session),
           maxAttempts: MAX_ATTEMPTS[session.difficulty],
           hintsUsed: session.hintsUsed,
           accuracy: roundAccuracy(session),
@@ -114,6 +114,8 @@ export default function GamePage({ mode }: { mode: GameMode }) {
     const max = MAX_ATTEMPTS[session.difficulty];
     const costs = Array.from({ length: TOTAL_HINTS }, (_, i) => hintCostXp(word, session.difficulty, i));
     const letters = letterTiles(word);
+    const found = new Set(letters.filter((t) => session.revealed.includes(t.index)).map((t) => t.char));
+    const missed = new Set(session.guesses.filter((g) => g.kind === 'letter' && g.result === 'miss').map((g) => g.value));
     const letterHints = (session.hintLetters ?? []).map((index) => ({
       char: letters.find((t) => t.index === index)?.char ?? '?',
       position: letters.findIndex((t) => t.index === index) + 1,
@@ -157,7 +159,7 @@ export default function GamePage({ mode }: { mode: GameMode }) {
         </div>
 
         <div className={styles.statusRow}>
-          <AttemptsMeter used={session.guesses.length} max={max} />
+          <AttemptsMeter used={attemptsUsed(session)} max={max} label={session.difficulty === 'easy' ? 'misses left' : 'attempts'} />
           <XpIndicator
             value={finished ? session.xpEarned : potentialXp(session, word)}
             firstTryBonus={!finished && session.guesses.length === 0 && session.hintsUsed <= TEXT_HINTS ? Math.round(roundMax(word, session.difficulty) * FIRST_TRY_BONUS) : 0}
@@ -165,6 +167,7 @@ export default function GamePage({ mode }: { mode: GameMode }) {
         </div>
 
         <GuessInput onGuess={onGuess} feedback={game.feedback} disabled={finished} groups={groups} />
+        <LetterBoard found={found} missed={missed} disabled={finished} onProbe={onGuess} />
         <GuessHistory guesses={session.guesses} />
 
         {mode === 'unlimited' && !finished && (

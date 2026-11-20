@@ -10,7 +10,7 @@ import styles from './GameControls.module.scss';
 /* ---------- Difficulty ---------- */
 
 const DIFF_INFO: Record<Difficulty, { label: string; desc: string }> = {
-  easy: { label: 'Easy', desc: 'Basic concepts' },
+  easy: { label: 'Easy', desc: 'Basic · first letters shown' },
   medium: { label: 'Medium', desc: 'Mid-level concepts' },
   hard: { label: 'Hard', desc: 'Advanced concepts' },
 };
@@ -30,7 +30,7 @@ export function DifficultySelector({ value, locked, onChange }: { value: Difficu
           >
             <span className={styles.optLabel}>{DIFF_INFO[d].label}</span>
             <span className={styles.optMeta}>
-              {DIFF_INFO[d].desc} · {MAX_ATTEMPTS[d]} tries · {BASE_XP[d]}xp
+              {DIFF_INFO[d].desc} · {MAX_ATTEMPTS[d]} {d === 'easy' ? 'misses' : 'tries'} · {BASE_XP[d]}xp
             </span>
           </button>
         ))}
@@ -46,11 +46,11 @@ export function DifficultySelector({ value, locked, onChange }: { value: Difficu
 
 /* ---------- Attempts + XP ---------- */
 
-export function AttemptsMeter({ used, max }: { used: number; max: number }) {
+export function AttemptsMeter({ used, max, label = 'attempts' }: { used: number; max: number; label?: string }) {
   const left = max - used;
   return (
     <div className={styles.attempts} aria-label={`${left} of ${max} attempts left`}>
-      <span className={styles.statLabel}>attempts</span>
+      <span className={styles.statLabel}>{label}</span>
       <div className={styles.pips}>
         {Array.from({ length: max }, (_, i) => (
           <span key={i} className={`${styles.pip} ${i < left ? styles.pipOn : ''} ${left <= 2 && i < left ? styles.pipWarn : ''}`} />
@@ -226,26 +226,61 @@ export function GuessInput({
   );
 }
 
+/* ---------- Letter board ---------- */
+
+const ROWS = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+
+/**
+ * A–Z board: green = found in the word, dimmed = probed and not in it.
+ * Tapping an unused key probes that letter (uses an attempt, like typing it).
+ */
+export function LetterBoard({
+  found,
+  missed,
+  disabled,
+  onProbe,
+}: {
+  found: Set<string>;
+  missed: Set<string>;
+  disabled: boolean;
+  onProbe: (letter: string) => void;
+}) {
+  return (
+    <div className={styles.board} role="group" aria-label="Letter board">
+      {ROWS.map((row) => (
+        <div key={row} className={styles.boardRow}>
+          {row.split('').map((ch) => {
+            const isFound = found.has(ch);
+            const isMissed = missed.has(ch);
+            const label = isFound ? `${ch}, in the word` : isMissed ? `${ch}, not in the word` : `Probe ${ch}`;
+            return (
+              <button
+                key={ch}
+                type="button"
+                className={`${styles.key} ${isFound ? styles.keyFound : ''} ${isMissed ? styles.keyMissed : ''}`}
+                disabled={disabled || isFound || isMissed}
+                onClick={() => onProbe(ch)}
+                aria-label={label}
+                title={label}
+              >
+                {ch}
+              </button>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /* ---------- History ---------- */
 
+/** Full-word attempts so far (single-letter probes show on the letter board). */
 export function GuessHistory({ guesses }: { guesses: Guess[] }) {
-  if (!guesses.length) return null;
-  const letters = guesses.filter((g) => g.kind === 'letter');
   const words = guesses.filter((g) => g.kind === 'word');
+  if (!words.length) return null;
   return (
     <div className={styles.history}>
-      {letters.length > 0 && (
-        <div className={styles.historyRow}>
-          <span className={styles.statLabel}>probes</span>
-          <div className={styles.chips}>
-            {letters.map((g) => (
-              <span key={g.value} className={`${styles.chip} ${styles[g.result]}`}>
-                {g.value}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
       {words.length > 0 && (
         <div className={styles.historyRow}>
           <span className={styles.statLabel}>attempts</span>

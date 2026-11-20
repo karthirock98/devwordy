@@ -286,3 +286,51 @@
     }
   }
 }
+
+/* ---------- Solved by level ---------- */
+.levels {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.level {
+  display: grid;
+  grid-template-columns: 78px 1fr 52px;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  --tone: var(--green);
+
+  &.medium {
+    --tone: var(--cyan);
+  }
+  &.hard {
+    --tone: var(--purple);
+  }
+}
+
+.levelName {
+  color: var(--text-dim);
+}
+
+.levelTrack {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-2);
+  overflow: hidden;
+
+  span {
+    display: block;
+    height: 100%;
+    background: var(--tone);
+    transform-origin: left;
+    transition: transform 0.8s var(--ease);
+  }
+}
+
+.levelCount {
+  text-align: right;
+  color: var(--tone);
+}

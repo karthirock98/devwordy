@@ -35,7 +35,7 @@ src/
 
 | Difficulty | Word set | Attempts | Base XP |
 |---|---|---|---|
-| Easy | basic concepts (Variable, Array, Commit…) | 6 | 50 |
+| Easy | basic concepts (Variable, Array, Commit…); first letter of each word shown, found letters are free | 6 misses | 50 |
 | Medium | mid-level concepts (Closure, Rebase, Union Type…) | 7 | 100 |
 | Hard | advanced concepts (Monad, Reflog, Write Ahead Log…) | 8 | 175 |
 
@@ -51,8 +51,10 @@ Every hidden letter looks the same at every level; only the word set changes. Ch
 - Hints remove 10% / 15% / 20% / 20% / 25% of the round's XP; each wrong guess removes 8% (minimum 10%).
 - The first-try bonus needs a first-guess solve without letter-reveal hints.
 - While typing, the input shows how many letters you have typed out of the word length and won't accept more.
+- The letter board under the input marks found letters green and missed letters dimmed; tapping a key probes that letter.
+- Profile shows how many basic, mid-level and advanced words you have solved.
 
-To add words, append entries to `src/data/wordsLevels.ts` (or `wordsMore.ts`). Set `difficulty` to the concept's level: `easy` = basic, `medium` = mid-level, `hard` = advanced. Aim for at least two words per level in each category. Hints and facts must not contain the answer.
+To add words, append entries to `src/data/wordsExtra.ts` (compact `w(...)` helper) or `wordsLevels.ts`. Set `difficulty` to the concept's level: `easy` = basic, `medium` = mid-level, `hard` = advanced. Aim for at least two words per level in each category. Hints and facts must not contain the answer.
 
 ## Changing topics (players)
 
